@@ -1,0 +1,28 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+    <body class="sl">
+
+        <div style="display:flex; justify-content:center; align-items: center">
+            <div class="maindiv">
+
+                <h1>SIGN UP</h1>
+                <form action="/signup" method="post" class="needs-validation" novalidate>
+                    <select name="role" id="user/ngo" class="inputfield form-select" required>
+                        <option value="nothing" disabled selected>Select your role</option>
+                        <option value="user">User</option>
+                        <option value="ngo">NGO</option>
+                    </select>
+                    <input type="text" name="username" id="name" placeholder="User Name / Ngo Name" required
+                        class="inputfield form-control">
+                    <input type="email" name="email" id="email" placeholder="Email" required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                        class="inputfield form-control">
+                    <input type="tel" name="phone" id="contact" placeholder="Contact Number" required pattern="[0-9]{10}"
+                        class="inputfield form-control">
+                    <input type="password" name="password" id="password" placeholder="Password" required
+                        class="inputfield form-control">
+                    <button class="signup">Sign Up</button>
+                </form>
+                <p>Already Have a Account ? <a href="/login">Login</a></p>
+            </div>
+        </div>
+    </body>

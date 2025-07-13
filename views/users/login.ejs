@@ -1,0 +1,19 @@
+<% layout("/layouts/boilerplate.ejs") -%>
+
+    <body class="sl">
+        <div style="display:flex;  flex-direction: column; justify-content:center; align-items: center; height: 70vh;">
+            <div class="maindiv">
+
+                <h1>LOGIN</h1>
+                <form action="/login" method="post" class="needs-validation" novalidate>
+
+                    <input type="text" name="username" id="name" placeholder="User Name or Ngo Name" required
+                        class="inputfield form-control">
+                    <input type="password" name="name" id="password" placeholder="Password" required
+                        class="inputfield form-control">
+                    <button class="login">Login</button>
+                </form>
+                <p>Don't Have a Account ? <a href="/signup">Sign up</a></p>
+            </div>
+        </div>
+    </body>
