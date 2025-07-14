@@ -8,11 +8,16 @@
 
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container-fluid">
-    <div>
-      <a href="/profile"> <img src="https://photosnow.net/wp-content/uploads/2024/04/no-dp-mood-off_9.jpg"
+    <div style="display: flex;">
+      <% if(curUser && curUser.image) { %>
+        <a href="/profile"> <img src="<%= curUser.image.url %>"
           alt="profile img " class="profileimg"></a>
+      <% } else { %>
+        <a href="/profile"> <img src="https://photosnow.net/wp-content/uploads/2024/04/no-dp-mood-off_9.jpg"
+          alt="profile img " class="profileimg"></a>
+      <% } %>
       <a class="navbar-brand webname" href="/home">
-        <h3>EchoBridge</h3>
+        <h3>EcoBridge</h3>
       </a>
     </div>
     <div>

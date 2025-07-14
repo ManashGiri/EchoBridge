@@ -6,12 +6,12 @@
         <div class="header">
             <img src="https://cdn-icons-png.flaticon.com/128/5769/5769344.png" height="50px" width="50px"
                 alt="recycleImg">
-            <pre><h2> Request an Item </h2></pre>
+            <pre><h2> Edit Your Requested Item </h2></pre>
         </div>
         <br>
 
         <div class="ControForm">
-            <form action="/profile" method="POST" class="needs-validation" novalidate>
+            <form action="/needs/<%= need._id %>?_method=PUT" method="POST" class="needs-validation" novalidate>
                 <div>
                     <select class="form-select formGreen" name="needs[category]" required>
                         <option value="" disabled selected>Select Category of Waste</option>
@@ -30,7 +30,7 @@
 
                 <div>
                     <textarea placeholder="Describe your need (Laptops, Mobiles, length of cloth, wood, other etc)"
-                        rows="4" cols="62" class="formGreen form-control" name="needs[description]" required></textarea>
+                        rows="4" cols="62" class="formGreen form-control" name="needs[description]" required><%= need.description %></textarea>
                     <div class="invalid-feedback">Please describe what you need</div>
                 </div>
                 <br>
@@ -48,7 +48,7 @@
                 <br><br>
 
                 <div>
-                    <button class="btn btn-outline-success">Submit</button>
+                    <button class="btn btn-outline-success">Edit</button>
                 </div>
             </form>
               

@@ -17,6 +17,16 @@
                     <u style="font-size: 18px;"><b><i><%= uploads.owner.username %></i></b></u>: &nbsp; <%= uploads.description %> <br>
 
                     <b>Location:</b> &nbsp; <%= uploads.location %><br>
+                    <% if(curUser?.role === 'ngo') { %>
+                        <br>
+                        <a href="/accept/<%= uploads._id %>" class="btn btn-success me-3">Accept</a>
+                    <% } %>
+                    <% if(curUser?.role === 'admin') { %>
+                        <br>
+                        <form action="/uploads/<%= uploads._id %>?_method=DELETE" method="post">
+                            <button class="btn btn-danger ">Delete</button>
+                        </form>
+                    <% } %>
                 </p>
             </div>
 

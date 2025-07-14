@@ -3,9 +3,12 @@ const app = express();
 const ejsMate = require('ejs-mate');
 const path = require('path');
 const mongoose = require("mongoose");
-const NodeGeocoder = require("node-geocoder")
+const cloudinary = require('cloudinary').v2;
+const methodOverride = require("method-override");
+const NodeGeocoder = require("node-geocoder");
 const Upload = require('./models/uploads.js');
 const Need = require('./models/needs.js');
+const Notification = require('./models/notification.js');
 const User = require('./models/user.js');
 const flash = require('connect-flash');
 const passport = require("passport");
@@ -39,6 +42,7 @@ async function main() {
 
 app.set('view engine', 'ejs');
 app.engine('ejs', ejsMate);
+app.use(methodOverride("_method"));
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
@@ -115,15 +119,16 @@ app.post('/uploads', isLoggedIn, upload.single('uploads[image]'), async (req, re
             response[0].latitude,
         ],
     }
-
     let url = req.file.path;
     let filename = req.file.filename;
     const newUpload = new Upload(uploads);
     newUpload.owner = req.user._id;
     newUpload.image = { url, filename };
     newUpload.geometry = geometry;
+    req.user.ecotokens += 5;
+    await req.user.save();
     await newUpload.save();
-    req.flash("success", "New Nest Created!");
+    req.flash("success", "New Upload Posted!");
     res.redirect("/uploads");
 });
 
@@ -134,17 +139,48 @@ app.get('/uploads/:id', isLoggedIn, async (req, res) => {
     res.render('main/show.ejs', { uploads, needs });
 });
 
+// Destroy Route - Uploads
+app.delete('/uploads/:id', isLoggedIn, async (req, res) => {
+    let { id } = req.params;
+    const upload = await Upload.findById(id).populate('owner');
+    let tokens = upload.owner.ecotokens;
+    tokens -= 5;
+    await Upload.findByIdAndUpdate(id, { ecotokens: tokens });
+    if (upload.image && upload.image.filename) {
+        await cloudinary.uploader.destroy(upload.image.filename);
+    }
+    let deletedUpload = await Upload.findByIdAndDelete(id);
+    let message = `Warning: Admin deleted your upload :- ${deletedUpload?.category} - ${deletedUpload?.description}`;
+    const notification = new Notification({
+        message,
+        recipient: upload.owner._id,
+        sender: req.user._id,
+    });
+    await notification.save();
+    console.log(deletedUpload);
+    req.flash("success", "Upload Deleted!");
+    res.redirect("/home");
+});
+
 app.get('/uploads', isLoggedIn, async (req, res) => {
     const uploads = await Upload.find({}).populate("owner");
     const allUploads = uploads.filter(upload => {
         console.log(req.user.role);
         return (
             upload.owner && (
-                upload.owner._id.equals(req.user._id) || req.user.role === 'ngo'
+                upload.owner._id.equals(req.user._id) || req.user.role === 'ngo' || req.user.role === 'admin'
             )
         );
     });
     res.render('main/uploads.ejs', { allUploads });
+});
+
+app.get('/profile', isLoggedIn, async (req, res) => {
+    const users = await User.findById(req.user._id);
+    const existingNeed = await Need.findOne({ owner: req.user._id });
+    const hasNeed = !!existingNeed;
+    console.log(users);
+    res.render("main/profile.ejs", { users, existingNeed, hasNeed });
 });
 
 // Create Route - Needs
@@ -180,8 +216,71 @@ app.post('/profile', isLoggedIn, async (req, res) => {
     newNeed.owner = req.user._id;
     newNeed.geometry = geometry;
     await newNeed.save();
-    req.flash("success", "Need Added!");
-    res.redirect("/uploads");
+    req.flash("success", "Requested Item Added!");
+    res.redirect("/profile");
+});
+
+app.get('/needs/:id/edit', isLoggedIn, async (req, res) => {
+    let { id } = req.params;
+    const need = await Need.findById(id);
+    if (!need) {
+        req.flash("error", "News doesn't exists!");
+        res.redirect("/profile");
+    }
+    res.render("main/needEdit.ejs", { need });
+});
+
+app.put('/needs/:id', isLoggedIn, async (req, res) => {
+    let { id } = req.params;
+    let need = await Need.findByIdAndUpdate(id, { ...req.body.needs });
+    req.flash("success", "Requested Item Updated!");
+    res.redirect(`/profile`);
+});
+
+app.post("/photo", upload.single("photo"), async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id);
+        user.image.url = req.file.path;
+
+        user.image.filename = req.file.filename;
+        await user.save();
+        req.flash("success", "Profile Picture Updated!");
+        res.redirect("/profile");
+    } catch (err) {
+        console.error("Photo upload failed:", err);
+        req.flash("error", "Something went wrong");
+        res.redirect("/profile");
+    }
+});
+
+app.get("/accept/:id", isLoggedIn, async (req, res) => {
+    let { id } = req.params;
+    const upload = await Upload.findById(id).populate('owner');
+    const ngo = req.user;
+    let message = `${ngo.username} accepted your contribution!`;
+    const notification = new Notification({
+        message,
+        recipient: upload.owner._id,
+        sender: ngo._id,
+    });
+    await notification.save();
+    req.flash("success", "Upload Accepted!");
+    res.redirect("/home");
+});
+
+app.get("/notifications", isLoggedIn, async (req, res) => {
+    const notifications = await Notification.find({ recipient: req.user._id }).sort({ createdAt: -1 });
+    res.render("main/notifications.ejs", { notifications });
+});
+
+app.get('/certificate', isLoggedIn, async (req, res) => {
+    if (req.user.ecotokens >= 1000) {
+        req.flash("success", "Congralutions! You have been certified");
+        res.redirect('/profile');
+    } else {
+        req.flash("error", "Not Enough Ecotokens");
+        res.redirect('/profile');
+    }
 });
 
 app.get('/signup', (req, res) => {
@@ -214,6 +313,7 @@ app.get('/login', (req, res) => {
 
 app.post('/login', saveRedirectUrl, passport.authenticate("local", { failureRedirect: "/login", failureFlash: true }), async (req, res) => {
     let { username } = req.body;
+    console.log(username);
     req.flash("success", `Hi ${username}, now you're all set to explore!`);
     let redirectUrl = res.locals.redirectUrl || "/home";
     res.redirect(redirectUrl);

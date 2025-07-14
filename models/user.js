@@ -7,15 +7,26 @@ const userSchema = new Schema({
         type: String,
         required: true,
     },
-    phone : {
+    phone: {
         type: String,
         required: true,
     },
-    role : {
+    role: {
         type: String,
         enum: ['admin', 'user', 'ngo'],
         required: true,
     },
+    image: {
+        filename: String,
+        url: {
+            type: String,
+            default: "https://photosnow.net/wp-content/uploads/2024/04/no-dp-mood-off_9.jpg",
+        },
+    },
+    ecotokens: {
+        type: Number,
+        default: 0,
+    }
 });
 
 userSchema.plugin(passportLocalMongoose);

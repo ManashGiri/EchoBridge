@@ -31,6 +31,6 @@ const marker = L.marker(coords, { icon: greenIcon} ).addTo(map).bindPopup(`<h5>$
         fillColor: '#f03',
         fillOpacity: 0.6
       }).addTo(map)
-        .bindPopup(`<b>${need.location}</b> <br> ${need.owner.username} needs ${need.category} <br> ${need.description} <br>`);
+        .bindPopup(`<b>${need.location}</b> <br> ${need.owner.username} needs ${need.category} <br> ${need.description} <br> Contact: +91 ${need.owner.phone}, ${need.owner.email} <br>`);
     }
   });
