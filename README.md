@@ -1,8 +1,7 @@
 # 🌿 EcoBridge - Waste to Worth
 
-[Website Link](https://ecobridge-q2m1.onrender.com/home)
-
 > Empowering individuals and NGOs to reduce waste, promote reuse, and build a greener tomorrow.
+[Website Link](https://ecobridge-q2m1.onrender.com/home)
 
 ---
 
@@ -33,11 +32,12 @@ EcoBridge creates a hyperlocal platform that:
 
 * 👤 Role-based login system (User / NGO)
 * 📍 Real-time location tagging (GIS using Leaflet.js)
-* 📤 Contribute items with image & description
+* 📤 Contribute & Request items
 * ✅ NGO accept/reject system for transparency
 * 🧾 User history & reward-based EcoPoints system
 * 🔔 Notification center for updates
 * 🔧 Profile settings & redeem system
+* 📱 Initial mobile layout set; polishing underway
 
 ---
 
