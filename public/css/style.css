@@ -253,7 +253,17 @@ h1 {
     height: 15rem;
 }
 
+.upload-img {
+    height: 15rem;
+}
+
 .listing-card {
+    border: none;
+    margin-bottom: 2rem;
+    background-color: beige;
+}
+
+.upload-card {
     border: none;
     margin-bottom: 2rem;
     background-color: beige;
@@ -488,5 +498,10 @@ sign up page Start*/
     .description {
         width: 60vw;
         margin-left: -1.5rem;
+    }
+
+    .upload-card {
+        width: 80vw !important;
+        margin-left: 13rem !important;
     }
 }

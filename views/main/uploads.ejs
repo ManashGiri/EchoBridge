@@ -3,8 +3,8 @@
 <div class="row row-cols-lg-4 row-cols-md-2 row-cols-sm-1 mt-4">
         <% for(let upload of allUploads) { %>
             <a href="/uploads/<%= upload._id %>" class="listing-link">
-                <div class="card col-1 listing-card" style="width: 100%;">
-                    <img src="<%= upload.image.url %>" class="card-img-top index-img" alt="uploads_image">
+                <div class="card col-1 upload-card" style="width: 100%;">
+                    <img src="<%= upload.image.url %>" class="card-img-top upload-img" alt="uploads_image">
                     <!-- <div class="card-img-overlay"></div> -->
                     <div class="card-body">
                         <p class="card-text">
