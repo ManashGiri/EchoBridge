@@ -8,15 +8,17 @@ body {
     padding: 0px;
     background-color: beige;
     box-sizing: border-box;
-    /* font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;    */
-    /* background-image: url("https://sdmntprwestus3.oaiusercontent.com/files/00000000-d91c-61fd-a981-98beffbf04b8/raw?se=2025-07-10T15%3A55%3A52Z&sp=r&sv=2024-08-04&sr=b&scid=f3751312-6e66-5c62-bae6-f31803cb3d71&skoid=0da8417a-a4c3-4a19-9b05-b82cee9d8868&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-07-10T10%3A25%3A48Z&ske=2025-07-11T10%3A25%3A48Z&sks=b&skv=2024-08-04&sig=9WPyvE9o0Oeuxq4LPH7gfgpNR4kydU9M6IUVL%2B0BDGc%3D");
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif; */
 }
+
 
 .profileimg {
     height: 50px;
     width: 50px;
     border-radius: 50%;
+}
+
+.profileimg:hover {
+    box-shadow: 0 4px 20px black;
 }
 
 .center {
@@ -51,6 +53,10 @@ body {
     margin-left: 1rem;
     text-decoration: none;
     color: white;
+}
+
+.webname h3:hover {
+    text-shadow: 0 4px 20px white;
 }
 
 .container-fluid {
@@ -147,113 +153,67 @@ h1 {
 
 }
 
-.foot {
-    height: 4em;
+/* Footer Styling */
+
+/* .foot {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #16a34a;
-    background-color: #16a34a;
-    font-weight: bold;
-    font-size: 22px;
-    color: white;
-}
-
-/* Signup / Login Page Styling */
-
-/* .containerForm {
-
-    box-shadow: 0 7px 10px green; 
-    border-radius: 10px;
-    margin: 80px auto;
-    padding: 20px 0;
-    width: max-content;
-    background: beige;
-    text-align: center;
 } */
 
-/* #userButton {
-    margin: 10px;
-    padding: 15px;
-    border-style: none;
-    border-radius: 40rem;
-    font-size: 23px;
-    font-weight: 200px;
-    width: 150px;
-    box-shadow: 0 5px 7px rgb(73, 36, 36);
-    color: rgb(73, 36, 36);
-}
-
-#userButton:active {
-    background-color: green;
-    color: white;
-}
-
-#userButton:hover {
-    background-color: green;
-    color: white;
-}
-
-#ngoButton {
-    margin: 10px;
-    padding: 15px;
-    border-style: none;
-    border-radius: 40rem;
-    font-size: 23px;
-    font-weight: 200px;
-    width: 150px;
-    box-shadow: 0 5px 7px rgb(73, 36, 36);
-    color: rgb(73, 36, 36);
-}
-
-#ngoButton:active {
-    background-color: green;
-    color: white;
-}
-
-#ngoButton:hover {
-    background-color: green;
-    color: white;
-} */
-
-/* .userHead {
-    color: rgb(73, 36, 36);
-
-}
-
-#userLoginButton {
-    margin-left: 6rem;
-    border-style: none;
-    width: 7rem;
-    border-radius: 12rem;
-    background-color: #16a34a;
-    color: white;
-    height: 3rem;
-    box-shadow: 0 5px 7px rgb(73, 36, 36);
-    transition: 0.5s;
-}
-
-#userLoginButton:hover {
-    transform: scale(1.1);
-}
-
-.userForm {
-    margin: 5px auto;
-    padding: 5px 40px;
-    padding-right: 9rem;
+.f-info-links,
+.f-info-socials {
     width: 100%;
 }
 
-.userInput {
-    border-style: none;
-    border-radius: 5px;
-    width: 150%;
-    background-color: white;
-    height: 2rem;
-    font-size: 18px;
-    box-shadow: 0 5px 7px rgb(73, 36, 36);
-} 
-    color:white;
+.f-info-links {
+    margin-bottom: 3rem;
+}
+
+.f-info-socials {
+    margin-top: 1.8rem;
+}
+
+.f-info-socials a {
+    text-decoration: none;
+}
+
+.f-info-socials i {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: white;
+    opacity: 0.8;
+}
+
+.f-info-socials i:hover {
+    opacity: 2;
+    cursor: pointer;
+}
+
+.credits {
+    margin-top: 1rem;
+    font-size: larger;
+}
+
+.f-info-links a {
+    text-decoration: none;
+    color: white;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+}
+
+.f-info {
+    text-align: center;
+    display: flex;
+    height: 10rem;
+    background-color: #16a34a;
+    color: white;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
 /* Contribute Page Styling */
@@ -503,5 +463,30 @@ sign up page Start*/
         justify-content: center;
         align-items: center;
         width: 100vh;
+    }
+
+    .row {
+        margin-left: -12.5rem;
+        width: 190vw;
+    }
+
+    #showmap {
+        height: 50vh;
+        width: 100%;
+    }
+
+    #map {
+        height: 50vh;
+        width: 100%;
+    }
+
+    .navbar-brand {
+        margin-top: auto;
+        margin-right: auto;
+    }
+
+    .description {
+        width: 60vw;
+        margin-left: -1.5rem;
     }
 }

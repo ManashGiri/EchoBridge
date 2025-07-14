@@ -16,6 +16,11 @@ const uploadSchema = new Schema({
     url: String,
   },
   location: String,
+  status: {
+    type: String,
+    enum: ["pending", "accepted"],
+    default: "pending",
+  },
   owner: {
     type: Schema.Types.ObjectId,
     ref: "User",

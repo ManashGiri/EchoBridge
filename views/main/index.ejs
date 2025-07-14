@@ -5,9 +5,10 @@
     Connect with the NGOs, Recyclers, and UpCyclers . 
         Make an Imapact from your Home & Company 
     </p>
-    <% if(curUser?.role === 'ngo') { %>
+    <% if(curUser?.role === 'ngo' || curUser?.role === 'admin') { %>
         <a class="contro" href="/uploads">View Posts</a>
-    <% } else { %>
+    <% } %>
+    <% if(curUser?.role === 'user' || curUser?.role === 'admin' || !curUser) { %>
         <a class="contro" href="/contribute">Contribute</a>
     <% } %>
  </div>
@@ -17,24 +18,24 @@
     <div class="div3">
         <img class="camera" src="https://img.icons8.com/?size=160&id=u6A1fcsd1q2J&format=png" alt="img"  >
         <h1>1. Add Your Items</h1>
-        <p>Take a photo  of your reusable waste item. 
-         Add a quick description and category.
+        <p>Take a photo of your reusable waste item. 
+         Add a quick description and category to become a contributor
         </p>
     </div>
 
         <div class="div3">
             <img src="https://img.icons8.com/?size=160&id=6nrYifh6GrxJ&format=png" height="100px" width="100px">
             <h1>2. Auto-Match With NGO</h1>
-            <p>We connect you instantly to the right NGO,
-                Recyclers or UpCyclers near by.
+            <p>We connect you instantly to the right NGO.
+                The NGO then delivers it to the desired user, or recycles / disposes accordingly
             </p>
         </div>
 
         <div class="div3">
             <img src="https://img.icons8.com/?size=160&id=65480&format=png" height="100px" width="100px">
             <h1>3. Drop or Pickup</h1>
-            <p>Choose your perferred option .
-                EcoPoint & impact badges every time you contribute!.
+            <p> Get your requested item from the contributor through NGO.
+                The contributor will EchoTokens for further redeems
             </p>
         </div>
     </div>

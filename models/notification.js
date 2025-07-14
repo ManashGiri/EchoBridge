@@ -12,7 +12,6 @@ const msgSchema = new Schema({
         ref: "User" 
     },
     createdAt: { type: Date, default: Date.now },
-    isRead: { type: Boolean, default: false }
 });
 
 

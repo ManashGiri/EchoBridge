@@ -11,6 +11,7 @@ const Need = require('./models/needs.js');
 const Notification = require('./models/notification.js');
 const User = require('./models/user.js');
 const flash = require('connect-flash');
+const MongoStore = require("connect-mongo");
 const passport = require("passport");
 const passportLocal = require("passport-local");
 const session = require("express-session");
@@ -24,7 +25,7 @@ if (process.env.NODE_ENV != "production") {
 }
 
 const isProduction = process.env.NODE_ENV === "production";
-const refererURL = isProduction ? "https://nestin-wnne.onrender.com/listings" : "http://localhost:3000/home";
+const refererURL = isProduction ? "https://ecobridge-q2m1.onrender.com/home" : "http://localhost:3000/home";
 
 const MONGO_URL = process.env.DB_URL;
 
@@ -47,7 +48,16 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 
+const store = MongoStore.create({
+    mongoUrl: MONGO_URL,
+    crypto: {
+        secret: process.env.SECRET,
+    },
+    touchAfter: 24 * 60 * 60,
+});
+
 const sessionOptions = {
+    store,
     secret: process.env.SECRET,
     resave: false,
     saveUninitialized: true,
@@ -94,7 +104,6 @@ app.get('/needs', isLoggedIn, (req, res) => {
 // Create Route - Uploads
 app.post('/uploads', isLoggedIn, upload.single('uploads[image]'), async (req, res) => {
     let uploads = req.body.uploads;
-    console.log(uploads);
     const geocoder = NodeGeocoder({
         provider: 'openstreetmap',
         fetch: async (url, options = {}) => {
@@ -143,9 +152,9 @@ app.get('/uploads/:id', isLoggedIn, async (req, res) => {
 app.delete('/uploads/:id', isLoggedIn, async (req, res) => {
     let { id } = req.params;
     const upload = await Upload.findById(id).populate('owner');
-    let tokens = upload.owner.ecotokens;
-    tokens -= 5;
-    await Upload.findByIdAndUpdate(id, { ecotokens: tokens });
+    upload.owner.ecotokens -= 5;
+    console.log(upload.owner.ecotokens);
+    await upload.owner.save();
     if (upload.image && upload.image.filename) {
         await cloudinary.uploader.destroy(upload.image.filename);
     }
@@ -157,7 +166,6 @@ app.delete('/uploads/:id', isLoggedIn, async (req, res) => {
         sender: req.user._id,
     });
     await notification.save();
-    console.log(deletedUpload);
     req.flash("success", "Upload Deleted!");
     res.redirect("/home");
 });
@@ -165,7 +173,6 @@ app.delete('/uploads/:id', isLoggedIn, async (req, res) => {
 app.get('/uploads', isLoggedIn, async (req, res) => {
     const uploads = await Upload.find({}).populate("owner");
     const allUploads = uploads.filter(upload => {
-        console.log(req.user.role);
         return (
             upload.owner && (
                 upload.owner._id.equals(req.user._id) || req.user.role === 'ngo' || req.user.role === 'admin'
@@ -179,14 +186,12 @@ app.get('/profile', isLoggedIn, async (req, res) => {
     const users = await User.findById(req.user._id);
     const existingNeed = await Need.findOne({ owner: req.user._id });
     const hasNeed = !!existingNeed;
-    console.log(users);
     res.render("main/profile.ejs", { users, existingNeed, hasNeed });
 });
 
 // Create Route - Needs
 app.post('/profile', isLoggedIn, async (req, res) => {
     let needs = req.body.needs;
-    console.log(needs);
     const geocoder = NodeGeocoder({
         provider: 'openstreetmap',
         fetch: async (url, options = {}) => {
@@ -239,9 +244,13 @@ app.put('/needs/:id', isLoggedIn, async (req, res) => {
 
 app.post("/photo", upload.single("photo"), async (req, res) => {
     try {
+        if (req.user.image.url !== "https://photosnow.net/wp-content/uploads/2024/04/no-dp-mood-off_9.jpg") {
+            if (req.user.image && req.user.image.filename) {
+                await cloudinary.uploader.destroy(req.user.image.filename);
+            }
+        }
         const user = await User.findById(req.user._id);
         user.image.url = req.file.path;
-
         user.image.filename = req.file.filename;
         await user.save();
         req.flash("success", "Profile Picture Updated!");
@@ -256,6 +265,7 @@ app.post("/photo", upload.single("photo"), async (req, res) => {
 app.get("/accept/:id", isLoggedIn, async (req, res) => {
     let { id } = req.params;
     const upload = await Upload.findById(id).populate('owner');
+    await Upload.findByIdAndUpdate(id, { status: "accepted" });
     const ngo = req.user;
     let message = `${ngo.username} accepted your contribution!`;
     const notification = new Notification({
@@ -265,7 +275,7 @@ app.get("/accept/:id", isLoggedIn, async (req, res) => {
     });
     await notification.save();
     req.flash("success", "Upload Accepted!");
-    res.redirect("/home");
+    res.redirect(`/uploads/${id}`);
 });
 
 app.get("/notifications", isLoggedIn, async (req, res) => {
@@ -290,7 +300,6 @@ app.get('/signup', (req, res) => {
 app.post('/signup', saveRedirectUrl, async (req, res) => {
     try {
         let { email, username, role, password, phone } = req.body;
-        console.log(req.body);
         let newUser = new User({ email, username, phone, role });
         let registeredUser = await User.register(newUser, password);
         req.login(registeredUser, (err) => {
@@ -313,7 +322,6 @@ app.get('/login', (req, res) => {
 
 app.post('/login', saveRedirectUrl, passport.authenticate("local", { failureRedirect: "/login", failureFlash: true }), async (req, res) => {
     let { username } = req.body;
-    console.log(username);
     req.flash("success", `Hi ${username}, now you're all set to explore!`);
     let redirectUrl = res.locals.redirectUrl || "/home";
     res.redirect(redirectUrl);
@@ -327,6 +335,14 @@ app.get('/logout', (req, res, next) => {
         req.flash("success", "Thank you for visiting us. Have a nice day!");
         res.redirect("/home");
     });
+});
+
+app.get("/privacy", (req, res) => {
+    res.render("conditions/privacy.ejs");
+});
+
+app.get("/terms", (req, res) => {
+    res.render("conditions/terms.ejs");
 });
 
 app.use((err, req, res, next) => {
