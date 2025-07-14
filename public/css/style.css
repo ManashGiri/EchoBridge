@@ -445,7 +445,7 @@ sign up page Start*/
 
 /* Animations */
 /* media query */
-@media(max-width:400px) {
+@media(max-width:410px) {
     .foot {
         font-size: 17px;
     }
